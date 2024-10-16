@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_spinner"
+        android:title="Spinner"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_radiogroup"
+        android:title="RadioGroup"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_datepicker"
+        android:title="DatePicker"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_listview"
+        android:title="ListView"
+        app:showAsAction="never" />
+
+</menu>

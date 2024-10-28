@@ -9,8 +9,6 @@ import androidx.appcompat.widget.Toolbar
 /*
 Abdy Hernandez 8-966-1927
 Charles Chuez   8-960-2188
-
-
  */
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

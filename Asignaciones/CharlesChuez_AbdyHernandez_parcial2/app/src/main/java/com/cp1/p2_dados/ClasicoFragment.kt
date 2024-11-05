@@ -1,10 +1,8 @@
 package com.cp1.p2_dados
 
 import android.app.AlertDialog
-import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,47 +10,37 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
-
+import android.widget.Toast
 
 class ClasicoFragment : Fragment() {
+    private lateinit var dbHelper: DatabaseHelper
+    private var idUsuario: Int = -1 // Variable para almacenar el idUsuario
+    private var puntosUsuario: Int = 0 // Cambiar a var para poder modificarlo
 
-    interface OnPuntosActualizadosListener {        //$$$
-        fun onPuntosActualizados(nuevosPuntos: Int)
+    //////////////////////////////////////////////////////////////////////77
+
+    interface OnUpdateListener {
+        fun onUpdate(nuevosPuntos: Int)
     }
 
-    private var listener: OnPuntosActualizadosListener? = null  //$$$
+    private var updateListener: OnUpdateListener? = null
 
-    companion object {                  //%%%
-        fun newInstance(usuario: String, puntos: Int) = ClasicoFragment().apply {
-            arguments = Bundle().apply {
-                putString("usuario", usuario)
-                putInt("puntos", puntos)
-            }
-        }
+    fun setOnUpdateListener(listener: MenuInicial) {
+        updateListener = listener
     }
 
-    private var usuario : String = ""   //%%%
-    private var puntos : Int = 1000     //%%%
-
-
-    override fun onAttach(context: Context) {   //$$$
-        super.onAttach(context)
-        if (context is OnPuntosActualizadosListener) {
-            listener = context
-        } else {
-            throw RuntimeException("$context debe implementar OnPuntosActualizadosListener")
-        }
+    private fun actualizarPuntos(nuevosPuntos: Int) {
+        // Llama al callback cuando los puntos cambian
+        updateListener?.onUpdate(nuevosPuntos)
     }
 
-    override fun onDetach() {           //$$$
-        super.onDetach()
-        listener = null
-    }
+    ///////////////////////////////////////////////////////////////////////
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+        dbHelper = DatabaseHelper(requireContext()) // Inicializa aquí
 
-        val view =  inflater.inflate(R.layout.fragment_clasico, container, false)
+        // Inflate the layout for this fragment
+        val view = inflater.inflate(R.layout.fragment_clasico, container, false)
 
         //Elementos a utilizar
         val btn1 = view.findViewById<Button>(R.id.btnCLA)
@@ -62,31 +50,51 @@ class ClasicoFragment : Fragment() {
         val imagen = view.findViewById<ImageView>(R.id.imgCLA)
 
         val nombreTextView = view.findViewById<TextView>(R.id.txtNombre)
+
+        // Recibir usuario y idUsuario
+        idUsuario = arguments?.getInt("idUsuario", -1) ?: -1 // Obtener el idUsuario
+
+        // Obtener el nombre y los puntos del usuario
+        val nombreUsuario = dbHelper.obtenerNombreUsuario(idUsuario)
+        puntosUsuario = dbHelper.obtenerPuntosUsuario(idUsuario) ?: 0 // Inicializa aquí
+
+        // Asignar valores a los TextViews
+        nombreTextView.text = nombreUsuario ?: "Usuario" // Si es null, mostrar "Usuario"
         val puntosTextView = view.findViewById<TextView>(R.id.txtPuntos)
+        puntosTextView.text = puntosUsuario.toString()
 
-        usuario = arguments?.getString("usuario") ?: "Usuario"  //%%%
-        puntos = arguments?.getInt("puntos") ?: 1000            //%%%
-
-        nombreTextView.text = usuario
-        puntosTextView.text = puntos.toString()
-
-        //Inicializacion de variables importantes
+        // Inicialización de variables importantes
         var contador: Int = 0
         var contvic: Int = 0
 
-        btn1.setOnClickListener{
+        btn1.setOnClickListener {
             val resultado = (1..6).random()
             resultadoTextView.text = resultado.toString()
 
-            puntos = if (resultado == 6) {      //$$$
-                puntos + 500
+            // Actualizar puntosUsuario
+            puntosUsuario = if (resultado == 6) {
+                puntosUsuario + 500 // Incrementa 500 si el resultado es 6
             } else {
-                puntos - 100
+                puntosUsuario - 100 // Decrementa 100 en caso contrario
             }
+
+            // Actualizar los puntos en la base de datos
+            val exito = dbHelper.actualizarPuntosUsuario(idUsuario, puntosUsuario)
+            if (exito) {
+                puntosTextView.text = puntosUsuario.toString() // Actualizar el texto del puntaje en la interfaz
+            } else {
+                Toast.makeText(requireContext(), "Error al actualizar los puntos", Toast.LENGTH_SHORT).show()
+            }
+
+            // Actualizar los puntos en la base de datos
+            /*val database = DatabaseHelper(requireContext())
+            database.actualizarPuntosUsuario(idUsuario, puntosUsuario) // usuarioId debe estar definido
+            */
+
 
             if (resultado == 6) {
                 view.setBackgroundColor(Color.parseColor("#FF9800"))
-                contvic ++
+                contvic++
                 // Crear y mostrar el diálogo de victoria
                 val builder = AlertDialog.Builder(requireContext())
                 builder.setTitle("¡VICTORIA!")
@@ -99,12 +107,11 @@ class ClasicoFragment : Fragment() {
 
                 // Mostrar el diálogo
                 builder.show()
-            }
-            else{
+            } else {
                 view.setBackgroundColor(Color.parseColor("#8D949D"))
             }
 
-            //Acciones por número
+            // Acciones por número
             val drawableResource = when (resultado) {
                 1 -> R.drawable.num1
                 2 -> R.drawable.num2
@@ -115,36 +122,19 @@ class ClasicoFragment : Fragment() {
             }
             imagen.setImageResource(drawableResource)
 
-            //OUTPUTS
-            contador ++
+            // OUTPUTS
+            contador++
             resultadoTextView.text = "$resultado"
-            puntosTextView.text = puntos.toString()     //$$$
-            txtCont.text = "Intentos: "+contador.toString()
-            txtVic.text = "Victorias: "+contvic.toString()
+            txtCont.text = "Intentos: $contador"
+            txtVic.text = "Victorias: $contvic"
 
-            //Deshabilitar boton
-            if (puntos == 0) {
+            // Deshabilitar botón
+            if (puntosUsuario <= 0) {
                 btn1.isEnabled = false
                 txtCont.text = "Se acabaron los intentos"
             }
-
-            listener?.onPuntosActualizados(puntos)
         }
 
         return view
     }
 }
-
-/*
-                    //DIALOGO DE DERROTA
-                    val builder = AlertDialog.Builder(requireContext())
-                    builder.setTitle("DERROTA")
-                    builder.setMessage("Perdiste :c")
-
-                    // Botón OK para cerrar el diálogo
-                    builder.setPositiveButton("OK") { dialog, _ ->
-                        dialog.dismiss() // Cerrar el diálogo
-                    }
-
-                    // Mostrar el diálogo
-                    builder.show()*/

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="RunConfigurationProducerService">
@@ -14,4 +15,18 @@
       </set>
     </option>
   </component>
+=======
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RunConfigurationProducerService">
+    <option name="ignoredProducers">
+      <set>
+        <option value="com.intellij.execution.junit.AbstractAllInDirectoryConfigurationProducer" />
+        <option value="com.intellij.execution.junit.AllInPackageConfigurationProducer" />
+        <option value="com.intellij.execution.junit.TestInClassConfigurationProducer" />
+        <option value="com.intellij.execution.junit.UniqueIdConfigurationProducer" />
+      </set>
+    </option>
+  </component>
+>>>>>>> 37eed98d5164f9871b19226a753fbc5e0db35d47
 </project>

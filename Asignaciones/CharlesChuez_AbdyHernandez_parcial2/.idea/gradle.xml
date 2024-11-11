@@ -9,8 +9,8 @@
         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
         <option name="modules">
           <set>
-            <option value="/mnt/files/git/HPA4/Asignaciones/CharlesChuez_AbdyHernandez_parcial2" />
-            <option value="/mnt/files/git/HPA4/Asignaciones/CharlesChuez_AbdyHernandez_parcial2/app" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

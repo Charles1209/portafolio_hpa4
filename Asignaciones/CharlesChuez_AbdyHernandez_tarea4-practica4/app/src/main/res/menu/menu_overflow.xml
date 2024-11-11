@@ -4,5 +4,6 @@
 
     <item
         android:id="@+id/item_descargas"
-        android:title="@string/descargar_resultados" />
+        android:title="@string/descargar_resultados"
+        app:showAsAction="never" />
 </menu>

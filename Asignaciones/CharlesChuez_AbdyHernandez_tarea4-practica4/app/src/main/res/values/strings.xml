@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">T_P_3</string>
     <string name="descargar_resultados">Descargar Resultados</string>
+    <string name="botonCVS">CVS</string>
+    <string name="botonXLS">XLS</string>
+    <string name="botonXLSX">XLSX</string>
+    <string name="boton_regresar">Regresar</string>
 </resources>

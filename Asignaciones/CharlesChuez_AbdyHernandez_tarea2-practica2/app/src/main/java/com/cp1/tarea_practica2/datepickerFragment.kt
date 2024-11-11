@@ -39,10 +39,10 @@ class datepickerFragment : Fragment() {
                 },
                 year, month, day
             )
+
             datePickerDialog.show()
         }
 
         return view
     }
-
 }
